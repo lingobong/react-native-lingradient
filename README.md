@@ -13,12 +13,15 @@ import Lingradient from 'react-native-lingradient'
 
 ...
 render(){
+    // if state.color1 or state.color2 changed, Lingradient will change with animation
     return (<Lingradient
         colors={[ this.state.color1, this.state.color2 ]}
         locations={[0, 1]}
         style={{ width: 300, height: 300 }}
         useAngle={true}
         angle={0}
+
+        duration={1000}
     />)
 }
 ```

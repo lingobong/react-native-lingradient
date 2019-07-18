@@ -28,7 +28,7 @@ class GradientView extends React.Component<AnimatedGradientProps>{
 }
 const AnimatedGradientView = Animated.createAnimatedComponent(GradientView)
 
-export default class AnimatedGradient extends React.Component<AnimatedGradientProps>{
+export default class Lingradient extends React.Component<AnimatedGradientProps>{
     state = {
         animatedValue: null,
         startColors: null,
