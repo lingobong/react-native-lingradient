@@ -75,7 +75,7 @@ export default class Lingradient extends React.Component<AnimatedGradientProps>{
     preventUpdate = false
     componentDidUpdate(prevProps){
         if (this.preventUpdate) {
-            this.preventUpdate = true
+            this.preventUpdate = false
         }else{
             this.preventUpdate = true
             this.setState(
