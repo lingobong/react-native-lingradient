@@ -57,4 +57,4 @@ export default class Index extends React.Component {
 }
 ```
 
-<img src="https://github.com/lingobong/react-native-lingradient/blob/master/animation.gif" />
+<img src="https://github.com/lingobong/react-native-lingradient/blob/master/animation.gif?raw=true" />
