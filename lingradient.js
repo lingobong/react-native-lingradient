@@ -3,7 +3,7 @@ import LinearGradient,{ LinearGradientProps } from 'react-native-linear-gradient
 
 const React = require('react')
 const { Animated } = require('react-native')
-const { interpolateRgb } = require('d3-interpolate')
+const { interpolateRgb, interpolate } = require('d3-interpolate')
 
 interface AnimatedGradientProps extends LinearGradientProps {
     duration?: Number;
@@ -12,17 +12,25 @@ interface AnimatedGradientProps extends LinearGradientProps {
 class GradientView extends React.Component<AnimatedGradientProps>{
     render () {
         let colors = []
+        let locations = []
         for (let prop of Object.keys(this.props)) {
-            let colorIdx = prop.match(/^__animatedValue_interpolate__(\d+)$/)
+            let colorIdx = prop.match(/^__animatedValue_colorInterpolate__(\d+)$/)
             if (colorIdx) {
                 colors[colorIdx[1]] = this.props[prop]
+                delete this.props[prop]
             }
-            delete this.props[prop]
+            
+            let location = prop.match(/^__animatedValue_locationInterpolate__(\d+)$/)
+            if (location) {
+                locations[location[1]] = this.props[prop]
+                delete this.props[prop]
+            }
         }
 
         return (<LinearGradient
             {...this.props}
             colors={colors}
+            locations={locations}
         />)
     }
 }
@@ -33,6 +41,9 @@ export default class Lingradient extends React.Component<AnimatedGradientProps>{
         animatedValue: null,
         startColors: null,
         endColors: null,
+
+        startLocations: null,
+        endLocations: null,
     }
     currentAnimatedValue = 0
     constructor(p){
@@ -43,18 +54,28 @@ export default class Lingradient extends React.Component<AnimatedGradientProps>{
         let animatedValue = new Animated.Value(0)
         let startColors = []
         let endColors = []
+        let startLocations = []
+        let endLocations = []
 
         if (this.state.startColors) {
-            for (let colorIdx in this.state.startColors) {
+            for (let idx in this.state.startColors) {
                 startColors.push(
-                    interpolateRgb(this.state.startColors[colorIdx], this.state.endColors[colorIdx])(this.currentAnimatedValue)
+                    interpolateRgb(this.state.startColors[idx], this.state.endColors[idx])(this.currentAnimatedValue)
                 )
-                endColors.push(nextProps.colors[colorIdx])
+                startLocations.push(
+                    interpolate(this.state.startLocations[idx], this.state.endLocations[idx])(this.currentAnimatedValue)
+                )
+
+                endColors.push(nextProps.colors[idx])
+                endLocations.push(nextProps.locations[idx])
             }
         } else {
-            for (let colorIdx in props.colors) {
-                startColors.push(props.colors[colorIdx])
-                endColors.push(nextProps.colors[colorIdx])
+            for (let idx in props.colors) {
+                startColors.push(props.colors[idx])
+                endColors.push(props.colors[idx])
+
+                startLocations.push(props.locations[idx])
+                endLocations.push(props.locations[idx])
             }
         }
 
@@ -69,6 +90,9 @@ export default class Lingradient extends React.Component<AnimatedGradientProps>{
             animatedValue,
             startColors,
             endColors,
+
+            startLocations,
+            endLocations,
         }
     }
 
@@ -85,15 +109,21 @@ export default class Lingradient extends React.Component<AnimatedGradientProps>{
     }
 
     render(){
-        let { startColors, endColors, animatedValue } = this.state
+        let { startColors, endColors, animatedValue, startLocations, endLocations } = this.state
         let animatedColors = {}
 
-        for (let colorIdx in startColors) {
-            let interpolate = animatedValue.interpolate({
+        for (let idx in startColors) {
+            let colorInterpolate = animatedValue.interpolate({
                 inputRange: [0, 1],
-                outputRange: [startColors[colorIdx], endColors[colorIdx]]
+                outputRange: [startColors[idx], endColors[idx]]
             })
-            animatedColors['__animatedValue_interpolate__'+colorIdx] = interpolate
+            animatedColors['__animatedValue_colorInterpolate__'+idx] = colorInterpolate
+
+            let locationInterpolate = animatedValue.interpolate({
+                inputRange: [0, 1],
+                outputRange: [startLocations[idx], endLocations[idx]]
+            })
+            animatedColors['__animatedValue_locationInterpolate__'+idx] = locationInterpolate
         }
   
         return (<AnimatedGradientView {...this.props} {...animatedColors} />)

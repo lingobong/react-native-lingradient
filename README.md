@@ -18,8 +18,9 @@ render(){
         colors={[ this.state.color1, this.state.color2 ]}
         locations={[0, 1]}
         style={{ width: 300, height: 300 }}
-        useAngle={true}
-        angle={0}
+        
+        start={{x: 0.0, y: 0}}
+        end={{x: 1, y: 0}}
 
         duration={1000}
     />)
