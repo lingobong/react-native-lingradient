@@ -43,13 +43,14 @@ export default class Index extends React.Component {
             </View>
             <View style={{ height: 10 }}>
                 <Lingradient
-                colors={this.state.colors}
-                locations={this.state.locations}
-                style={{
-                flex: 1
-                }}
-                start={{x: 0.0, y: 0}}
-                end={{x: 1, y: 0}}
+                    colors={this.state.colors}
+                    locations={this.state.locations}
+                    style={{
+                    flex: 1
+                    }}
+                    start={{x: 0.0, y: 0}}
+                    end={{x: 1, y: 0}}
+                    duration={300}
                 />
             </View>
         </SafeAreaView>)
